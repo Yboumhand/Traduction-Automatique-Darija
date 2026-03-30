@@ -6,10 +6,10 @@ import time, os
 # CONFIG — Ajoute tes clés Groq ici
 # ============================================
 API_KEYS = [
-    'gsk_REDACTED',
-    'gsk_REDACTED',
-    'gsk_REDACTED',
-    'gsk_REDACTED',
+    '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',
+    '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',
+    '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',
+    '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',
 ]
 
 INPUT_FILE  = 'unlabeled_dataset.csv'   # ton fichier CSV exporté depuis Label Studio

@@ -4,13 +4,15 @@
 
 ---
 
-## 1. Principes de Nettoyage Automatique (DQA)
+## 1. Principes de Nettoyage et Imputation (DQA)
 
-Pour garantir la pureté des données injectées dans le modèle, les règles de nettoyage suivantes sont appliquées systématiquement :
+Pour garantir la pureté et la complétude des données injectées dans le modèle, les règles suivantes sont appliquées :
 
-- **Suppression du Bruit IA :** Retrait des artefacts de génération tels que `@@`, `<unk>`, et les symboles de hachage `#`.
+- **Traitement du Bruit IA :** Retrait des artefacts de génération tels que `@@` et les symboles de hachage `#`.
+- **Gestion des balises `<unk>` et Segments Incomplets :**
+  - **Imputation Intelligente :** Si une balise `<unk>` ou un segment tronqué peut être complété par une prédiction logique basée sur le contexte ou une recherche rapide sur le net, l'information doit être restaurée.
+  - **Suppression/Simplification :** Si l'information est irrécupérable, la balise est supprimée et la phrase est simplifiée pour conserver un sens complet (ex: _"band named <unk>"_ ➔ _"band"_).
 - **Normalisation Spatiale :** Suppression des espaces doubles, ainsi que des espaces inutiles en début et fin de segment (trimming).
-- **Gestion des Segments Incomplets :** Si une phrase est tronquée ou sans suite logique (ex: _"band named <unk>"_), elle est simplifiée pour conserver un sens complet (ex: _"band"_).
 
 ---
 
@@ -20,15 +22,14 @@ La séparation stricte des alphabets est une contrainte majeure du projet :
 
 ### 2.1 Colonne `darija_arabic` (Script Arabe Unifié)
 
-- **Zéro Latin :** Aucun caractère latin n'est toléré.
+- **Zéro Latin :** Aucun caractère latin n'est toléré, y compris pour les acronymes (ex: `WWF` ➔ `دوبل في دوبل إف`).
 - **Mots Étrangers :** Les termes d'origine française, espagnole ou anglaise intégrés au Darija doivent être écrits en caractères arabes.
   - _Exemple :_ `album` ➔ `ألبوم` | `bus` ➔ `طوبيس`.
 - **Chiffres :** Utilisation des chiffres arabes occidentaux (`1`, `2`, `3`...) pour maintenir la cohérence avec les autres colonnes.
 
 ### 2.2 Colonne `darija_arabizi` (Phonétique Latine)
 
-<- **Harmonisation Phonétique :** Bien que la variation soit tolérée, une préférence est donnée à l'usage des chiffres pour les sons inexistants en latin (ex: `7` pour `ح`, `9` pour `ق`, `3` pour `ع`).
-
+- **Harmonisation Phonétique :** Bien que la variation soit tolérée, une préférence est donnée à l'usage des chiffres pour les sons inexistants en latin (ex: `7` pour `ح`, `9` pour `ق`, `3` pour `ع`).
 - **Mots d'origine étrangère :** Conservés dans leur alphabet d'origine s'ils sont prononcés tels quels.
 
 ---
@@ -39,18 +40,17 @@ L'objectif est d'assurer la **fidélité sémantique** tout en respectant le **f
 
 - **Noms Propres & Titres :**
   - **English :** Le titre original est conservé (ex: _Fire and Glass_).
-  - **MSA :** Le titre est traduit ou adapté pour ne pas briser la fluidité de la phrase arabe (ex: _النار والزجاج_).
+  - **MSA :** Le titre est traduit ou adapté pour ne pas briser la fluidité de la phrase arabe (ex: _النار والزجاج_). Les acronymes latins y sont tolérés.
 - **Correction du "Flow" :** Les traductions automatiques (Silver) trop littérales sont reformulées manuellement pour correspondre au registre utilisé par un locuteur natif.
 
 ---
 
 ## 4. Annexe : Lexique de Convergence (Exemples)
 
-Afin d'assurer la consistance du modèle, les choix suivants ont été standardisés :
-
-| Terme Source | darija_arabizi | darija_arabic | Règle appliquée                    |
-| :----------- | :------------- | :------------ | :--------------------------------- |
-| Album        | album          | ألبوم         | Translittération arabe obligatoire |
-| Gardien      | 7arris         | حارس          | Usage du '7' pour la consistance   |
-| Région       | minta9a        | منطقة         | Usage du '9' pour la consistance   |
-| Tragedy      | trajediya      | تراجيديا      | Adaptation phonétique en arabe     |
+| Terme Source | darija_arabizi | darija_arabic   | Règle appliquée                    |
+| :----------- | :------------- | :-------------- | :--------------------------------- |
+| Album        | album          | ألبوم           | Translittération arabe obligatoire |
+| WWF          | WWF            | دوبل في دوبل إف | Zéro Latin en colonne arabe        |
+| Gardien      | 7arris         | حارس            | Usage du '7' pour la consistance   |
+| Région       | minta9a        | منطقة           | Usage du '9' pour la consistance   |
+| Tragedy      | trajediya      | تراجيديا        | Adaptation phonétique en arabe     |
